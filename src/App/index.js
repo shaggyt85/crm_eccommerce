@@ -1,10 +1,12 @@
 
-import './App.css';
+import { Header } from '../components/Header';
 
 function App() {
   return (
     <>
-    <h1>Hola Katy</h1>
+    <div className='w-screen h-auto flex flex-col'>
+      <Header />
+    </div>
     </>
   );
 }
