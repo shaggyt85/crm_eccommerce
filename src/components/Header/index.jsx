@@ -27,7 +27,7 @@ const Header = () => {
       setIsMenu(!isMenu)
     }
   }
-
+  
   const logout = () => {
     setIsMenu(false)
     localStorage.clear('user')

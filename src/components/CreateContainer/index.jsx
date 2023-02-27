@@ -6,6 +6,10 @@ import { Loader } from '../Loader'
 import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { storage } from '../../firebase.config'
 import { saveItem } from '../../utils/firebaseFunction'
+import { useStateValue } from '../../context/StateProvider'
+
+import { getAllFoodItems } from '../../utils/firebaseFunction';
+import { actionType } from '../../context/reducer';
 
 const CreateContainer = () => {
   const [title, setTitle] = useState('')
@@ -17,13 +21,15 @@ const CreateContainer = () => {
   const [msg, setMsg] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [imageAsset, setImageAsset] = useState(null)
+  // eslint-disable-next-line no-unused-vars
+  const [{foodItems}, dispatch ] = useStateValue()
 
   const uploadImage = (e) => {
     setIsLoading(true)
     const imageFile = e.target.files[0]
     const storageRef = ref(storage, `Images/${Date.now()}-${imageFile.name}`)
     const uploadTask = uploadBytesResumable(storageRef, imageFile)
-
+    
     uploadTask.on('state_changed', (snapshot) => {
       // eslint-disable-next-line no-unused-vars
       const uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
@@ -106,8 +112,9 @@ const CreateContainer = () => {
         setIsLoading(false)
       }, 4000)
     }
+    fetchData()
   }
-
+  
   const clearData = () => {
     setTitle('')
     setImageAsset(null)
@@ -115,6 +122,18 @@ const CreateContainer = () => {
     setPrice('')
     setCategory('Select Category')
   }
+  
+  const fetchData = async () => {
+    await getAllFoodItems().then(data => {
+      console.log(data, 'data Create')
+      dispatch({
+        type: actionType.SET_FOOD_ITEMS,
+        foodItems: data,
+      })
+    })
+  }
+
+  
 
   return (
     <>
